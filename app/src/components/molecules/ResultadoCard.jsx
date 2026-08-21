@@ -1,12 +1,11 @@
 import React from 'react';
 
-// Removi o "estaAprovado" daqui de cima
+
 function ResultadoCard({ media, erro }) { 
   
-  // A lógica agora vive DENTRO do componente
+
   const estaAprovado = media !== null && media >= 60;
 
-  // Bloco de Erro
   if (erro) {
     return (
       <div className="mt-5 p-[15px] border border-[#f8d7da] rounded-lg bg-[#f8d7da] text-center">
@@ -15,8 +14,7 @@ function ResultadoCard({ media, erro }) {
     );
   }
 
-  // Bloco de Instrução Inicial (Sem média ainda)
-  if (media === null) {
+  if (!media) {
     return (
       <div className="mt-5 p-[15px] border border-[#e9ecef] rounded-lg bg-white text-center">
         <p className="text-[#6c757d] m-0">Preencha todas as notas para ver o resultado.</p>
@@ -24,7 +22,6 @@ function ResultadoCard({ media, erro }) {
     );
   }
 
-  // Bloco de Resultado Final (Aprovado ou Reprovado)
   return (
     <div className="mt-5 p-[15px] border border-[#e9ecef] rounded-lg bg-white text-center">
       <h3 className="text-lg font-bold mb-2">Média Final: {media.toFixed(1)}</h3>
