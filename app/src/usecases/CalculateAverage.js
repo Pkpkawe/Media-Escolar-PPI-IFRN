@@ -1,7 +1,4 @@
-import {
-  getAverageRules,
-  getTotalWeight,
-} from "../../domain";
+import { getAverageRules, getTotalWeight } from "../domain/AverageRules.js";
 
 export class CalculateAverage {
   execute(grades, stageCount) {
