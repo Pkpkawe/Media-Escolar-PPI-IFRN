@@ -1,6 +1,6 @@
 import React from 'react';
-import PageLayout from './components/templates/PageLayout/PageLayout';
-import CalculadoraForm from './components/organisms/CalculadoraForm/CalculadoraForm';
+import PageLayout from './components/templates/PageLayout';
+import CalculadoraForm from './components/organisms/CalculadoraForm';
 
 function App() {
   return (

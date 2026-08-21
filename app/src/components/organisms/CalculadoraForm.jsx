@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
-import Input from '../../atoms/Input/Input';
-import Select from '../../atoms/Select/Select';
-import ResultadoCard from '../../molecules/ResultadoCard/ResultadoCard';
-import { CalculateAverage } from '../../../usecases/CalculateAverage';
-import { getAverageRules } from '../../../domain/AverageRules';
+import React, { useState, useEffect } from 'react';
+import Input from '../atoms/Input';
+import Select from '../atoms/Select';
+import ResultadoCard from '../molecules/ResultadoCard';
+import { CalculateAverage } from '../../usecases/CalculateAverage';
+import { getAverageRules } from '../../domain/AverageRules';
 
 const calculator = new CalculateAverage();
 
 function CalculadoraForm() {
   const [stageCount, setStageCount] = useState(2);
   const [grades, setGrades] = useState({ E1: '', E2: '', E3: '', E4: '' });
+  
+  // Usando estados para controlar regras, média e erro
+  const [regrasAtuais, setRegrasAtuais] = useState(getAverageRules(2));
+  const [media, setMedia] = useState(null);
+  const [erro, setErro] = useState(null);
 
   const handleInputChange = (stage, value) => {
     setGrades((prev) => ({ ...prev, [stage]: value }));
@@ -18,25 +23,30 @@ function CalculadoraForm() {
   const handleStageChange = (e) => {
     const newStageCount = Number(e.target.value);
     setStageCount(newStageCount);
+    // Limpa as notas ao trocar o tipo de disciplina
     setGrades({ E1: '', E2: '', E3: '', E4: '' });
   };
 
-  const regrasAtuais = getAverageRules(stageCount);
+  // useEffect "vigia" grades e stageCount. Se algum deles mudar, roda essa função:
+  useEffect(() => {
+    // 1. Atualiza as regras
+    setRegrasAtuais(getAverageRules(stageCount));
 
-  let media = null;
-  let erro = null;
-
-  try {
-    media = calculator.execute(grades, stageCount);
-  } catch (err) {
-    if (err.message.includes('obrigatória')) {
-      media = null;
-    } else {
-      erro = err.message;
+    // 2. Tenta calcular a média
+    try {
+      const calculatedMedia = calculator.execute(grades, stageCount);
+      setMedia(calculatedMedia);
+      setErro(null); // Limpa o erro se o cálculo deu certo
+    } catch (err) {
+      if (err.message.includes('obrigatória')) {
+        setMedia(null);
+        setErro(null); // Esconde o erro enquanto o usuário ainda está preenchendo
+      } else {
+        setErro(err.message);
+        setMedia(null);
+      }
     }
-  }
-
-  const estaAprovado = media !== null && media >= 60;
+  }, [grades, stageCount]); // Array de dependências
 
   const opcoesTipo = [
     { value: 2, label: 'Semestral (2 Etapas)' },
@@ -70,7 +80,8 @@ function CalculadoraForm() {
         ))}
       </div>
 
-      <ResultadoCard media={media} erro={erro} estaAprovado={estaAprovado} />
+      {/* Removido o estaAprovado. O componente ResultadoCard resolve isso internamente agora! */}
+      <ResultadoCard media={media} erro={erro} />
     </div>
   );
 }

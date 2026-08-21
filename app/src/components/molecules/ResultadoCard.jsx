@@ -1,6 +1,11 @@
 import React from 'react';
 
-function ResultadoCard({ media, erro, estaAprovado }) {
+// Removi o "estaAprovado" daqui de cima
+function ResultadoCard({ media, erro }) { 
+  
+  // A lógica agora vive DENTRO do componente
+  const estaAprovado = media !== null && media >= 60;
+
   // Bloco de Erro
   if (erro) {
     return (
