@@ -16,23 +16,23 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Move to React Project
-        run: cd app
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
+          cache-dependency-path: app/package-lock.json
 
       - name: Install Dependencies
+        working-directory: ./app
         run: npm ci
 
       - name: Build Project
+        working-directory: ./app
         run: npm run build
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: dist
+          folder: app/dist
           branch: gh-pages
